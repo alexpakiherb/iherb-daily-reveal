@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>iHerb — Your Daily Reveal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-50:#f0f7e8;--green-100:#dcefc8;--green-200:#b8df8f;--green-500:#5a9e14;--green-600:#46820b;--green-700:#3a6d09;--green-800:#2d5a06;
+    --gold-400:#f0d060;--gold-500:#d4a017;
+    --amber-50:#fffbeb;--amber-100:#fef3c7;--amber-600:#d97706;
+    --slate-50:#f8fafc;--slate-100:#f1f5f9;--slate-200:#e2e8f0;--slate-300:#cbd5e1;--slate-400:#94a3b8;--slate-500:#64748b;--slate-600:#475569;--slate-700:#334155;--slate-800:#1e293b;--slate-900:#0f172a;
+    --radius-lg:20px;--radius-md:14px;--radius-sm:10px;--radius-full:9999px;
+    --shadow-card:0 8px 40px rgba(0,0,0,.10),0 1px 6px rgba(0,0,0,.04);
+    --shadow-card-hover:0 16px 56px rgba(0,0,0,.14),0 2px 8px rgba(0,0,0,.06);
+    --ease-out-expo:cubic-bezier(.16,1,.3,1);
+    --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f6f3;color:var(--slate-800);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+  /* ── Header ── */
+  .header{background:var(--green-700);color:#fff;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+  .header-logo{font-size:22px;font-weight:800;letter-spacing:-.5px}
+  .header-logo span{color:var(--gold-400);font-size:7px;vertical-align:middle;margin-left:2px}
+  .header-icons{display:flex;gap:20px;align-items:center}
+  .header-icon{width:20px;height:20px;opacity:.8;cursor:pointer;transition:opacity .15s}
+  .header-icon:hover{opacity:1}
+  .notif-dot{width:6px;height:6px;background:#ef4444;border-radius:50%;position:absolute;top:-1px;right:-1px;border:1.5px solid var(--green-700)}
+
+  /* ── Goals Banner ── */
+  .goals-banner{background:#fff;padding:14px 20px 16px;border-bottom:1px solid var(--slate-200);cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+  .goals-banner:active{background:var(--slate-50)}
+  .goals-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .goals-label-group{display:flex;flex-direction:column;gap:1px}
+  .goals-label{font-size:13px;font-weight:700;color:var(--slate-800);letter-spacing:-.1px}
+  .goals-label-sub{font-size:11px;color:var(--slate-400);font-weight:500}
+  .goals-edit-btn{background:var(--green-600);border:none;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:#fff;cursor:pointer;padding:7px 14px;display:flex;align-items:center;gap:5px;transition:all .15s;border-radius:var(--radius-full);white-space:nowrap;-webkit-tap-highlight-color:transparent}
+  .goals-edit-btn:hover{background:var(--green-500)}
+  .goals-edit-btn:active{transform:scale(.96)}
+  .goals-edit-btn svg{width:12px;height:12px}
+  .goals-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .goal-tag{background:var(--green-50);border:1px solid var(--green-100);color:var(--green-700);padding:4px 11px;border-radius:var(--radius-full);font-size:11px;font-weight:600;letter-spacing:-.1px}
+
+  /* ── Goal Editor Modal ── */
+  .goals-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:200;align-items:flex-end;justify-content:center}
+  .goals-modal-overlay.open{display:flex}
+  .goals-modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:540px;max-height:80vh;max-height:80dvh;overflow-y:auto;padding:0;animation:slide-up .4s var(--ease-spring)}
+  @keyframes slide-up{0%{transform:translateY(100%)}100%{transform:translateY(0)}}
+  .goals-modal-header{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
+  .goals-modal-header h3{font-size:17px;font-weight:800;color:var(--slate-900);letter-spacing:-.2px}
+  .goals-modal-close{background:var(--slate-100);border:none;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent}
+  .goals-modal-close:hover{background:var(--slate-200)}
+  .goals-modal-close svg{width:14px;height:14px;stroke:var(--slate-500)}
+  .goals-modal-sub{font-size:13px;color:var(--slate-400);padding:6px 24px 16px;line-height:1.5}
+  .goals-grid{display:flex;flex-wrap:wrap;gap:8px;padding:0 24px 24px}
+  .goal-option{padding:9px 16px;border-radius:var(--radius-full);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;border:1.5px solid var(--slate-200);background:#fff;color:var(--slate-600);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent}
+  .goal-option:hover{border-color:var(--green-200);background:var(--green-50)}
+  .goal-option.selected{background:var(--green-600);color:#fff;border-color:var(--green-600)}
+  .goal-option.selected:hover{background:var(--green-500);border-color:var(--green-500)}
+  .goal-check{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--slate-300);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+  .goal-option.selected .goal-check{background:#fff;border-color:#fff}
+  .goal-option.selected .goal-check svg{opacity:1}
+  .goal-option .goal-check svg{opacity:0;transition:opacity .15s}
+  .goals-modal-footer{padding:14px 24px 28px;border-top:1px solid var(--slate-100)}
+  .goals-save-btn{width:100%;padding:14px;border:none;border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#fff;background:var(--green-600);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+  .goals-save-btn:hover{background:var(--green-500)}
+  .goals-save-btn:active{transform:scale(.98)}
+  .goals-count{font-size:12px;color:var(--slate-400);text-align:center;margin-top:8px}
+
+  /* ── Main Content ── */
+  .main{max-width:480px;margin:0 auto;padding:24px 16px 100px}
+  @media(min-width:768px){.main{max-width:520px;padding:32px 24px 100px}}
+  .section-header{margin-bottom:22px}
+  .section-title{font-size:22px;font-weight:800;letter-spacing:-.5px;color:var(--slate-900);line-height:1.2}
+  .section-subtitle{font-size:13px;color:var(--slate-400);margin-top:5px;line-height:1.5}
+
+  /* ── Card Stack ── */
+  .card-stack{position:relative;min-height:480px;margin-bottom:12px;perspective:1200px;transition:min-height .5s var(--ease-out-expo)}
+  .card-stack.collapsed{min-height:0}
+  .scratch-card{position:absolute;width:100%;border-radius:var(--radius-lg);overflow:visible;transition:transform .55s var(--ease-out-expo),opacity .45s ease,filter .45s ease;user-select:none;-webkit-user-select:none;will-change:transform}
+  .scratch-card.behind-1{transform:scale(.95) translateY(12px);opacity:.45;z-index:1;filter:blur(1.5px)}
+  .scratch-card.behind-2{transform:scale(.90) translateY(24px);opacity:.2;z-index:0;filter:blur(3px)}
+  .scratch-card.active{transform:scale(1) translateY(0);z-index:10;filter:none}
+  .scratch-card.dismissed{transform:translateX(-120%) rotate(-8deg);opacity:0;z-index:20;pointer-events:none;transition:transform .5s var(--ease-out-expo),opacity .4s ease}
+
+  /* ── Card Front ── */
+  .card-front{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent}
+  .card-front:hover{box-shadow:var(--shadow-card-hover)}
+  .card-front:hover .card-scene{transform:scale(1.03)}
+  .card-front:active .card-front-content{transform:scale(.98)}
+  .card-scene{width:100%;height:480px;transition:transform .7s var(--ease-out-expo)}
+  .card-front-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 25%,rgba(0,0,0,.06) 45%,rgba(0,0,0,.6) 100%);border-radius:var(--radius-lg)}
+  .card-front-content{position:absolute;bottom:0;left:0;right:0;padding:28px 24px;color:#fff;transition:transform .15s ease}
+  .card-front-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);padding:5px 12px;border-radius:var(--radius-full);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+  .tag-dot{width:5px;height:5px;border-radius:50%;background:#7dd956;box-shadow:0 0 6px rgba(125,217,86,.5)}
+  .card-front-title{font-size:26px;font-weight:800;letter-spacing:-.6px;line-height:1.15;margin-bottom:6px;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+  .card-front-desc{font-size:14px;opacity:.8;line-height:1.45;font-weight:400;max-width:300px;text-shadow:0 1px 4px rgba(0,0,0,.2)}
+  .card-front-cta{margin-top:20px;display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--slate-800);padding:12px 24px;border-radius:var(--radius-full);font-size:13px;font-weight:700;letter-spacing:-.2px;cursor:pointer;transition:all .2s ease;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+  .card-front-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,0,0,.2)}
+  .card-front-cta:active{transform:scale(.96)}
+  .cta-arrow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--green-600);transition:transform .2s}
+  .card-front-cta:hover .cta-arrow{transform:translateX(2px)}
+
+  /* ── Card Back (Reveal) ── */
+  .card-back{display:none;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);background:#fff;animation:reveal-pop .5s var(--ease-spring) forwards}
+  @keyframes reveal-pop{0%{transform:scale(.93) rotateX(4deg);opacity:0}100%{transform:scale(1) rotateX(0);opacity:1}}
+  .reveal-hero{position:relative;height:160px;overflow:hidden}
+  .reveal-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 15%,rgba(0,0,0,.5) 100%)}
+  .reveal-hero-content{position:absolute;bottom:0;left:0;right:0;padding:18px 22px;color:#fff}
+  .reveal-goal-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--radius-full);font-size:10px;font-weight:700;margin-bottom:6px;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.6px}
+  .reveal-discount{font-size:36px;font-weight:900;line-height:1;letter-spacing:-1.5px;text-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .reveal-discount-sub{font-size:12px;font-weight:500;opacity:.8;margin-top:2px}
+
+  .reveal-body{padding:20px 20px 16px}
+  .product-card{display:flex;gap:14px;padding:14px;background:var(--slate-50);border-radius:var(--radius-md);border:1px solid var(--slate-100);margin-bottom:14px}
+  .product-thumb-wrap{width:68px;height:68px;border-radius:var(--radius-sm);flex-shrink:0;overflow:hidden;border:1px solid var(--slate-100);background:#fff;display:flex;align-items:center;justify-content:center}
+  .product-thumb-wrap svg{width:52px;height:52px}
+  .product-details{flex:1;min-width:0}
+  .product-brand{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--slate-400);font-weight:700;margin-bottom:2px}
+  .product-name{font-size:13px;font-weight:700;color:var(--slate-800);line-height:1.35;margin-bottom:4px}
+  .product-rating{font-size:11px;color:var(--slate-400);display:flex;align-items:center;gap:3px}
+  .stars{color:#f59e0b;letter-spacing:-1px;font-size:12px}
+  .product-pricing{display:flex;align-items:baseline;gap:7px;margin-top:5px}
+  .price-was{font-size:12px;color:var(--slate-400);text-decoration:line-through}
+  .price-now{font-size:17px;font-weight:800;color:var(--green-700)}
+
+  .ai-insight{background:var(--slate-50);border-radius:var(--radius-md);padding:14px;margin-bottom:16px;border:1px solid var(--slate-100);overflow:hidden}
+  .ai-text-wrap{min-height:var(--ai-height,80px)}
+  .ai-label{display:flex;align-items:center;gap:7px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px;color:var(--green-700)}
+  .ai-icon{width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,var(--green-600),var(--green-500));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ai-icon svg{width:10px;height:10px}
+  .ai-text{font-size:13px;color:var(--slate-600);line-height:1.65;letter-spacing:-.1px}
+  .ai-cursor{display:inline-block;width:1.5px;height:13px;background:var(--green-600);margin-left:1px;vertical-align:text-bottom;border-radius:1px;animation:blink .75s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  .cta-stack{display:flex;flex-direction:column;gap:8px}
+  .btn-add{width:100%;padding:14px 24px;border:none;border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#fff;cursor:pointer;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:-.2px;background:var(--green-600);-webkit-tap-highlight-color:transparent}
+  .btn-add:hover{background:var(--green-500)}
+  .btn-add:active{transform:scale(.97)}
+  .btn-save{width:100%;padding:12px 24px;background:transparent;border:1.5px solid var(--slate-200);border-radius:var(--radius-md);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--slate-500);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+  .btn-save:hover{border-color:var(--slate-300);color:var(--slate-600)}
+
+  .timer-strip{display:flex;align-items:center;justify-content:center;gap:5px;padding:10px 16px;font-size:11px;font-weight:600;color:var(--amber-600);background:var(--amber-50);border-top:1px solid var(--amber-100)}
+  .timer-strip svg{width:13px;height:13px;stroke:var(--amber-600);flex-shrink:0}
+
+  .cards-remaining{text-align:center;font-size:12px;color:var(--slate-400);margin-top:16px;font-weight:500}
+  .cards-remaining strong{color:var(--green-600)}
+
+  /* ── Empty State ── */
+  .empty-state{display:none;text-align:center;padding:32px 20px}
+  .empty-state.visible{display:block;animation:fade-in .4s ease}
+  @keyframes fade-in{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+  .empty-wrap{background:#fff;border-radius:var(--radius-lg);padding:40px 28px;box-shadow:0 2px 16px rgba(0,0,0,.04)}
+  .empty-icon{width:56px;height:56px;border-radius:50%;background:var(--green-50);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  .empty-icon svg{width:24px;height:24px;stroke:var(--green-600)}
+  .empty-wrap h3{font-size:18px;font-weight:800;color:var(--slate-800);margin-bottom:6px;letter-spacing:-.2px}
+  .empty-wrap p{font-size:13px;color:var(--slate-400);line-height:1.55;max-width:280px;margin:0 auto}
+
+  /* ── Confetti ── */
+  .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;overflow:hidden}
+  .confetti-piece{position:absolute;top:-20px;animation:confetti-drop 2.6s cubic-bezier(.25,.46,.45,.94) forwards}
+  @keyframes confetti-drop{0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}80%{opacity:1}100%{transform:translateY(100vh) rotate(720deg) scale(.15);opacity:0}}
+
+  /* ── Toast ── */
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--slate-900);color:#fff;padding:12px 22px;border-radius:var(--radius-full);font-size:13px;font-weight:600;z-index:2000;transition:transform .35s var(--ease-spring);white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.18);letter-spacing:-.1px}
+  .toast.visible{transform:translateX(-50%) translateY(0)}
+
+  /* ── Haptic tap pulse ── */
+  @keyframes tap-pulse{0%{box-shadow:0 0 0 0 rgba(90,158,20,.3)}100%{box-shadow:0 0 0 16px rgba(90,158,20,0)}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">iHerb<span>●</span></div>
+  <div class="header-icons">
+    <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <div style="position:relative">
+      <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="notif-dot"></div>
+    </div>
+    <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  </div>
+</div>
+
+<div class="goals-banner" onclick="openGoalsEditor()">
+  <div class="goals-header">
+    <div class="goals-label-group">
+      <div class="goals-label">Your Wellness Goals</div>
+      <div class="goals-label-sub">Tap to personalize your daily reveals</div>
+    </div>
+    <button class="goals-edit-btn" onclick="event.stopPropagation(); openGoalsEditor()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit
+    </button>
+  </div>
+  <div class="goals-tags" id="goalsDisplay"></div>
+</div>
+
+<div class="goals-modal-overlay" id="goalsModal" onclick="if(event.target===this)closeGoalsEditor()">
+  <div class="goals-modal">
+    <div class="goals-modal-header">
+      <h3>Edit wellness goals</h3>
+      <button class="goals-modal-close" onclick="closeGoalsEditor()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="goals-modal-sub">Select the goals that matter most to you. Your reveals will be personalized to match.</div>
+    <div class="goals-grid" id="goalsGrid"></div>
+    <div class="goals-modal-footer">
+      <button class="goals-save-btn" onclick="saveGoals()">Update My Goals</button>
+      <div class="goals-count" id="goalsCount"></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-header">
+    <div class="section-title">Your Daily Reveal</div>
+    <div class="section-subtitle">Tap to unwrap personalized wellness surprises matched to your goals.</div>
+  </div>
+  <div class="card-stack" id="cardStack"></div>
+  <div class="cards-remaining" id="cardsRemaining"></div>
+  <div class="empty-state" id="emptyState">
+    <div class="empty-wrap">
+      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3>All reveals unlocked!</h3>
+      <p>Come back tomorrow for fresh personalized wellness surprises tailored to your goals.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+// ── Scene generators ──
+function makeScene(id, bg1, bg2, accent1, accent2, elements) {
+  return `<svg class="card-scene" viewBox="0 0 500 480" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="${id}g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient>
+      <radialGradient id="${id}g2" cx="70%" cy="30%" r="60%"><stop offset="0%" stop-color="${accent1}" stop-opacity=".3"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+      <radialGradient id="${id}g3" cx="20%" cy="80%" r="50%"><stop offset="0%" stop-color="${accent2}" stop-opacity=".2"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+    </defs>
+    <rect width="500" height="480" fill="url(#${id}g1)"/>
+    <rect width="500" height="480" fill="url(#${id}g2)"/>
+    <rect width="500" height="480" fill="url(#${id}g3)"/>
+    ${elements}
+    <g transform="translate(195,165)" opacity=".05" fill="#fff"><rect x="15" y="0" width="30" height="12" rx="3"/><rect x="8" y="12" width="44" height="100" rx="6"/><rect x="18" y="30" width="24" height="2" rx="1"/><rect x="18" y="40" width="24" height="2" rx="1"/></g>
+    <g opacity=".12"><rect x="60" y="340" width="36" height="18" rx="9" fill="${accent1}" transform="rotate(-20 78 349)"/><rect x="400" y="100" width="32" height="16" rx="8" fill="${accent2}" transform="rotate(15 416 108)"/><circle cx="420" cy="290" r="8" fill="${accent1}" opacity=".4"/></g>
+  </svg>`;
+}
+
+function makeHero(id, bg1, bg2, accent) {
+  return `<svg width="100%" height="100%" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient></defs>
+    <rect width="500" height="200" fill="url(#${id}h)"/>
+    <circle cx="400" cy="50" r="80" fill="${accent}" opacity=".1"/><circle cx="80" cy="160" r="60" fill="${accent}" opacity=".06"/>
+    <path d="M0 160 Q120 130 250 155 Q380 180 500 150 L500 200 L0 200Z" fill="${bg1}" opacity=".35"/>
+  </svg>`;
+}
+
+const SCENE_ELEMENTS = {
+  focus: `<g opacity=".12" stroke="#fff" stroke-width="1" fill="none"><circle cx="250" cy="200" r="80"/><circle cx="250" cy="200" r="120"/><circle cx="250" cy="200" r="160"/><line x1="250" y1="80" x2="350" y2="140"/><line x1="250" y1="80" x2="150" y2="140"/><line x1="150" y1="140" x2="130" y2="260"/><line x1="350" y1="140" x2="370" y2="260"/></g><g opacity=".25" fill="#fff"><circle cx="250" cy="200" r="4"/><circle cx="350" cy="140" r="3"/><circle cx="150" cy="140" r="3"/><circle cx="130" cy="260" r="3"/><circle cx="370" cy="260" r="3"/></g>`,
+  sleep: `<circle cx="360" cy="120" r="50" fill="#e9d5ff" opacity=".12"/><circle cx="375" cy="110" r="45" fill="#1a0a3e"/><g fill="#e9d5ff" opacity=".3"><circle cx="80" cy="60" r="1.5"/><circle cx="150" cy="90" r="1"/><circle cx="220" cy="40" r="1.8"/><circle cx="300" cy="70" r="1.2"/><circle cx="420" cy="55" r="1"/><circle cx="450" cy="180" r="1.5"/></g><path d="M0 380 Q80 340 160 360 Q250 380 340 350 Q430 320 500 340 L500 500 L0 500Z" fill="#2d1b69" opacity=".35"/>`,
+  recovery: `<g opacity=".08" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"><path d="M250 140 L250 290"/><path d="M250 170 L200 210"/><path d="M250 170 L310 195"/><path d="M250 290 L225 370"/><path d="M250 290 L275 370"/><circle cx="250" cy="125" r="22"/></g><g opacity=".1" stroke="#fb923c" stroke-width="2" fill="none" stroke-linecap="round"><path d="M140 180 Q120 170 100 180"/><path d="M360 160 Q380 150 400 160"/><path d="M365 180 Q390 175 410 180"/></g>`,
+  energy: `<g opacity=".12" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M250 80 L220 200 L280 180 L240 320"/></g><g opacity=".2" fill="#fbbf24"><polygon points="250,80 220,200 280,180 240,320 260,200 210,220" opacity=".15"/></g><g fill="#fbbf24" opacity=".15"><circle cx="150" cy="150" r="3"/><circle cx="350" cy="120" r="2.5"/><circle cx="120" cy="300" r="2"/><circle cx="380" cy="280" r="3"/></g>`,
+  immunity: `<g opacity=".1" stroke="#fff" stroke-width="1" fill="none"><circle cx="250" cy="230" r="100"/><circle cx="250" cy="230" r="70"/><circle cx="250" cy="230" r="40"/></g><g opacity=".15" fill="#4ade80"><circle cx="200" cy="180" r="6"/><circle cx="300" cy="180" r="6"/><circle cx="180" cy="260" r="5"/><circle cx="320" cy="260" r="5"/><circle cx="250" cy="300" r="5"/></g>`,
+  gut: `<g opacity=".08" stroke="#fff" stroke-width="2" fill="none"><path d="M180 120 Q200 180 250 200 Q300 220 280 280 Q260 340 220 360"/></g><g opacity=".15" fill="#a3e635"><circle cx="200" cy="160" r="4"/><circle cx="260" cy="210" r="3"/><circle cx="240" cy="270" r="5"/><circle cx="270" cy="310" r="3"/><circle cx="300" cy="170" r="3"/></g>`,
+  stress: `<g opacity=".08" stroke="#fff" stroke-width="1" fill="none"><path d="M100 250 Q200 200 250 250 Q300 300 400 250"/><path d="M100 270 Q200 220 250 270 Q300 320 400 270"/><path d="M100 290 Q200 240 250 290 Q300 340 400 290"/></g>`,
+  joint: `<g opacity=".1" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="250" cy="200" r="30"/><circle cx="250" cy="200" r="15" fill="#fff" opacity=".05"/><path d="M220 200 L150 200"/><path d="M280 200 L350 200"/></g>`,
+  heart: `<g opacity=".1" fill="#fff"><path d="M250 300 L180 230 Q150 200 180 170 Q210 140 250 180 Q290 140 320 170 Q350 200 320 230Z"/></g><g opacity=".06" stroke="#fff" stroke-width="1" fill="none"><path d="M100 250 L140 250 L160 220 L180 280 L200 230 L220 260 L250 250 L280 250 L300 220 L320 280 L340 240 L360 250 L400 250"/></g>`,
+  skin: `<g opacity=".08" fill="#fff"><circle cx="250" cy="220" r="80"/></g><g opacity=".12" fill="#f9a8d4"><circle cx="200" cy="160" r="3"/><circle cx="300" cy="180" r="4"/><circle cx="230" cy="300" r="3"/><circle cx="280" cy="140" r="2.5"/></g>`,
+  weight: `<g opacity=".1" stroke="#fff" stroke-width="1.5" fill="none"><path d="M150 350 L200 250 L250 300 L300 200 L350 250 L400 150"/></g><g opacity=".15" fill="#fff"><circle cx="150" cy="350" r="4"/><circle cx="200" cy="250" r="4"/><circle cx="300" cy="200" r="4"/><circle cx="400" cy="150" r="4"/></g>`,
+  fitness: `<g opacity=".08" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"><path d="M160 250 L200 250"/><rect x="200" y="230" width="20" height="40" rx="3"/><path d="M220 250 L280 250"/><rect x="280" y="230" width="20" height="40" rx="3"/><path d="M300 250 L340 250"/></g>`,
+  mood: `<g opacity=".08" fill="#fff"><circle cx="250" cy="200" r="70"/></g><g opacity=".1" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"><path d="M220 220 Q250 250 280 220"/><circle cx="225" cy="190" r="5"/><circle cx="275" cy="190" r="5"/></g>`,
+  bone: `<g opacity=".08" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"><path d="M230 140 Q220 130 210 140 Q200 150 210 160 L210 300 Q200 310 210 320 Q220 330 230 320"/><path d="M270 140 Q280 130 290 140 Q300 150 290 160 L290 300 Q300 310 290 320 Q280 330 270 320"/><path d="M210 220 L290 220"/></g>`,
+  hair: `<g opacity=".1" stroke="#fff" stroke-width="1" fill="none"><path d="M200 180 Q190 120 220 100 Q250 80 280 100 Q310 120 300 180"/><path d="M210 170 Q200 130 225 110"/><path d="M290 170 Q300 130 275 110"/></g><g opacity=".1" fill="#f9a8d4"><circle cx="230" cy="280" r="3"/><circle cx="270" cy="290" r="2.5"/><circle cx="250" cy="310" r="3"/></g>`,
+  aging: `<g opacity=".08" stroke="#fff" stroke-width="1" fill="none"><circle cx="250" cy="200" r="60"/><circle cx="250" cy="200" r="80"/><circle cx="250" cy="200" r="100"/></g><g opacity=".08" fill="#fff"><path d="M240 200 L250 180 L260 200 L250 195Z"/><circle cx="250" cy="200" r="8"/></g>`
+};
+
+const THEMES = {
+  Sleep:             {bg1:'#1a0a3e',bg2:'#2d1b69',a1:'#7c3aed',a2:'#4338ca',bc:['#5b21b6','#8b5cf6','#5b21b6'],el:'sleep'},
+  Energy:            {bg1:'#451a03',bg2:'#78350f',a1:'#f59e0b',a2:'#d97706',bc:['#92400e','#d97706','#92400e'],el:'energy'},
+  Focus:             {bg1:'#0c2d48',bg2:'#1a5276',a1:'#2980b9',a2:'#1abc9c',bc:['#1a5276','#2980b9','#1a5276'],el:'focus'},
+  Recovery:          {bg1:'#451a03',bg2:'#7c3a12',a1:'#ea580c',a2:'#dc2626',bc:['#9a3412','#ea580c','#9a3412'],el:'recovery'},
+  Immunity:          {bg1:'#052e16',bg2:'#14532d',a1:'#22c55e',a2:'#16a34a',bc:['#166534','#22c55e','#166534'],el:'immunity'},
+  'Gut Health':      {bg1:'#1a2e05',bg2:'#365314',a1:'#84cc16',a2:'#65a30d',bc:['#3f6212','#84cc16','#3f6212'],el:'gut'},
+  'Stress Relief':   {bg1:'#1e1b4b',bg2:'#312e81',a1:'#818cf8',a2:'#6366f1',bc:['#3730a3','#818cf8','#3730a3'],el:'stress'},
+  'Joint Health':    {bg1:'#1c1917',bg2:'#44403c',a1:'#a8a29e',a2:'#78716c',bc:['#57534e','#a8a29e','#57534e'],el:'joint'},
+  'Heart Health':    {bg1:'#450a0a',bg2:'#7f1d1d',a1:'#ef4444',a2:'#dc2626',bc:['#991b1b','#ef4444','#991b1b'],el:'heart'},
+  'Skin & Beauty':   {bg1:'#4a044e',bg2:'#701a75',a1:'#e879f9',a2:'#d946ef',bc:['#86198f','#d946ef','#86198f'],el:'skin'},
+  'Weight Management':{bg1:'#0c4a6e',bg2:'#075985',a1:'#38bdf8',a2:'#0ea5e9',bc:['#0369a1','#38bdf8','#0369a1'],el:'weight'},
+  Fitness:           {bg1:'#1e3a5f',bg2:'#1e40af',a1:'#60a5fa',a2:'#3b82f6',bc:['#1d4ed8','#60a5fa','#1d4ed8'],el:'fitness'},
+  Mood:              {bg1:'#431407',bg2:'#7c2d12',a1:'#fb923c',a2:'#f97316',bc:['#c2410c','#fb923c','#c2410c'],el:'mood'},
+  'Bone Health':     {bg1:'#1c1917',bg2:'#292524',a1:'#d6d3d1',a2:'#a8a29e',bc:['#44403c','#a8a29e','#44403c'],el:'bone'},
+  'Hair & Nails':    {bg1:'#500724',bg2:'#831843',a1:'#f472b6',a2:'#ec4899',bc:['#9d174d','#ec4899','#9d174d'],el:'hair'},
+  'Healthy Aging':   {bg1:'#172554',bg2:'#1e3a8a',a1:'#93c5fd',a2:'#60a5fa',bc:['#1e40af','#60a5fa','#1e40af'],el:'aging'}
+};
+
+const PRODUCT_CATALOG = {
+  Focus: {brand:'JARROW FORMULAS',name:'Cognizin Citicoline, 250mg, 60 Caps',rating:'4.7',reviews:'2,847',priceWas:'$24.99',priceNow:'$17.49',discount:'30% OFF',discountSub:'Personalized for you',title:'Sharpen your<br>mental clarity',desc:'A personalized find to support your cognitive performance goals',insight:'Citicoline supports phosphatidylcholine production \u2014 a key building block for brain cell membranes. Based on your Focus goal, this pairs well with the Omega-3s you already take. They work on complementary cognitive pathways.'},
+  Sleep: {brand:"NATURE'S BOUNTY",name:'Magnesium Glycinate, 240mg, 180 Caps',rating:'4.8',reviews:'5,122',priceWas:'$18.99',priceNow:'$14.24',discount:'25% OFF',discountSub:'Discovered just for you',title:'Rest deeper<br>every night',desc:'A science-backed recommendation for your sleep quality goals',insight:"Magnesium glycinate is one of the most bioavailable forms and has calming effects on the nervous system. Since sleep quality is your priority, this form is preferable to oxide \u2014 gentler on the stomach and better absorbed at bedtime."},
+  Recovery: {brand:'THORNE',name:'Curcumin Phytosome, 500mg, 60 Caps',rating:'4.6',reviews:'1,938',priceWas:'$38.00',priceNow:'FREE',discount:'FREE SAMPLE',discountSub:'Try with your next order',title:'Recover faster,<br>feel stronger',desc:'A targeted recommendation for your post-workout recovery',insight:"Curcumin is a potent anti-inflammatory, but most forms absorb poorly. Thorne\u2019s phytosome technology solves this with 29x better bioavailability. For your recovery goals, it meaningfully reduces post-exercise soreness and joint stiffness."},
+  Energy: {brand:'GARDEN OF LIFE',name:'Vitamin B12 Spray, Raspberry, 2oz',rating:'4.7',reviews:'3,412',priceWas:'$14.99',priceNow:'$10.49',discount:'30% OFF',discountSub:'Personalized for you',title:'Power through<br>your day',desc:'A targeted recommendation to support your natural energy levels',insight:"Methylcobalamin is the active form of B12 your body can use immediately. Many people are deficient without knowing it \u2014 it\u2019s essential for converting food into cellular energy. This spray format bypasses digestion for faster absorption."},
+  Immunity: {brand:'NOW FOODS',name:'Elderberry & Zinc Lozenges, 90ct',rating:'4.5',reviews:'2,218',priceWas:'$12.99',priceNow:'$9.09',discount:'30% OFF',discountSub:'Seasonal immunity pick',title:'Strengthen your<br>defenses',desc:'A timely recommendation to support your immune resilience',insight:"Elderberry is rich in anthocyanins that support immune cell signaling, while zinc is critical for immune function \u2014 even mild deficiency impairs your body\u2019s first line of defense. This combination is especially effective during seasonal transitions."},
+  'Gut Health': {brand:'CULTURELLE',name:'Daily Probiotic, 30 Billion CFU, 30 Caps',rating:'4.6',reviews:'4,567',priceWas:'$29.99',priceNow:'$22.49',discount:'25% OFF',discountSub:'Discovered just for you',title:'Nourish your<br>microbiome',desc:'A science-backed pick to support your digestive wellness',insight:"Lactobacillus rhamnosus GG is the most clinically studied probiotic strain, shown to support gut barrier integrity and healthy digestion. At 30 billion CFU, this delivers a therapeutic dose that can meaningfully shift your microbiome balance."},
+  'Stress Relief': {brand:'NATURAL VITALITY',name:'Calm Magnesium Powder, Raspberry Lemon',rating:'4.8',reviews:'6,891',priceWas:'$26.99',priceNow:'$18.89',discount:'30% OFF',discountSub:'Personalized for you',title:'Find your<br>calm center',desc:'A personalized recommendation to help manage daily stress',insight:"Magnesium citrate in powder form is rapidly absorbed and supports GABA production \u2014 your brain\u2019s primary calming neurotransmitter. The ritual of preparing it as a warm drink also creates a helpful stress-reducing routine signal."},
+  'Joint Health': {brand:'MOVE FREE',name:'UC-II Collagen, 40mg, 75 Tablets',rating:'4.4',reviews:'1,876',priceWas:'$32.99',priceNow:'$23.09',discount:'30% OFF',discountSub:'Matched to your goals',title:'Move with<br>ease again',desc:'A targeted recommendation for your joint comfort goals',insight:"UC-II (undenatured type II collagen) works differently than glucosamine \u2014 it trains your immune system to stop attacking joint cartilage. Studies show 40mg daily provides more relief than 1,500mg glucosamine + 1,200mg chondroitin combined."},
+  'Heart Health': {brand:'NORDIC NATURALS',name:'Ultimate Omega, 1280mg, 120 Softgels',rating:'4.9',reviews:'8,234',priceWas:'$47.99',priceNow:'$33.59',discount:'30% OFF',discountSub:'Personalized for you',title:'Support your<br>heart daily',desc:'A premium recommendation for your cardiovascular wellness',insight:"This delivers 1280mg of EPA+DHA per serving in triglyceride form \u2014 the most bioavailable omega-3 format. EPA supports healthy inflammatory response in blood vessels while DHA maintains arterial flexibility. Nordic Naturals\u2019 third-party testing ensures zero oxidation."},
+  'Skin & Beauty': {brand:'VITAL PROTEINS',name:'Collagen Peptides, Unflavored, 20oz',rating:'4.7',reviews:'12,456',priceWas:'$39.99',priceNow:'$29.99',discount:'25% OFF',discountSub:'Discovered just for you',title:'Glow from<br>the inside',desc:'A personalized pick to support your skin and beauty goals',insight:"Hydrolyzed collagen peptides are broken down small enough to absorb through your gut and reach skin cells. Studies show 10g daily for 8 weeks measurably increases skin elasticity and hydration. Mixing into your morning coffee or smoothie makes this effortless."},
+  'Weight Management': {brand:'GARDEN OF LIFE',name:'Raw Organic Fiber, 30 Servings',rating:'4.3',reviews:'2,109',priceWas:'$22.99',priceNow:'$16.09',discount:'30% OFF',discountSub:'Matched to your goals',title:'Support healthy<br>metabolism',desc:'A science-backed recommendation for your weight management goals',insight:"This blend of 15 organic superfoods delivers both soluble and insoluble fiber, promoting satiety and supporting healthy blood sugar response after meals. Adding fiber strategically before meals is one of the most evidence-backed approaches to weight management."},
+  Fitness: {brand:'OPTIMUM NUTRITION',name:'Creatine Monohydrate, 5g, 60 Servings',rating:'4.8',reviews:'7,891',priceWas:'$19.99',priceNow:'$13.99',discount:'30% OFF',discountSub:'Personalized for you',title:'Elevate your<br>performance',desc:'A targeted pick to help you get more from every workout',insight:"Creatine monohydrate is the single most researched sports supplement. It increases phosphocreatine stores in muscle, directly powering high-intensity efforts. 5g daily saturates your muscles in about 4 weeks \u2014 expect measurable strength gains by then."},
+  Mood: {brand:'NATURE MADE',name:'SAM-e 400mg, 36 Enteric Coated Tablets',rating:'4.5',reviews:'3,456',priceWas:'$36.99',priceNow:'$27.74',discount:'25% OFF',discountSub:'Discovered just for you',title:'Brighten your<br>outlook',desc:'A science-backed recommendation for emotional wellness',insight:"SAM-e (S-adenosyl methionine) is naturally produced in your body and plays a key role in neurotransmitter synthesis including serotonin and dopamine. Clinical studies show 400-800mg daily supports positive mood, with enteric coating protecting it through stomach acid."},
+  'Bone Health': {brand:'GARDEN OF LIFE',name:'Vitamin Code Raw Calcium, 120 Caps',rating:'4.6',reviews:'2,678',priceWas:'$33.99',priceNow:'$23.79',discount:'30% OFF',discountSub:'Personalized for you',title:'Build stronger<br>foundations',desc:'A whole-food recommendation for your bone health goals',insight:"This provides plant-sourced calcium from algae alongside vitamins D3, K2, and magnesium \u2014 the full cofactor team your bones need. Unlike rock-based calcium supplements, the plant form is more bioavailable and gentler on digestion."},
+  'Hair & Nails': {brand:'SPORTS RESEARCH',name:'Biotin 5000mcg + Coconut Oil, 120 Softgels',rating:'4.7',reviews:'5,432',priceWas:'$15.99',priceNow:'$11.99',discount:'25% OFF',discountSub:'Discovered just for you',title:'Strengthen &<br>nourish',desc:'A targeted recommendation for hair and nail vitality',insight:"Biotin at 5000mcg is well above the minimum \u2014 this therapeutic dose supports keratin infrastructure, the protein that builds hair and nails. The coconut oil base improves fat-soluble biotin absorption by up to 3x compared to standard tablets."},
+  'Healthy Aging': {brand:'LIFE EXTENSION',name:'NAD+ Cell Regenerator, 300mg, 30 Caps',rating:'4.5',reviews:'1,567',priceWas:'$47.00',priceNow:'FREE',discount:'FREE SAMPLE',discountSub:'Try with your next order',title:'Age on your<br>own terms',desc:'A cutting-edge recommendation for your longevity goals',insight:"Nicotinamide riboside boosts NAD+ levels \u2014 a coenzyme that declines with age and is essential for cellular energy production and DNA repair. At 300mg, this matches the dosage used in human clinical trials showing improved cellular metabolism markers."}
+};
+
+function bottleSVG(c1, c2, lc) {
+  return `<svg viewBox="0 0 60 72" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="2" width="24" height="10" rx="3" fill="${c1}" opacity=".7"/>
+    <rect x="20" y="4" width="20" height="6" rx="2" fill="${c1}"/>
+    <rect x="12" y="12" width="36" height="56" rx="5" fill="${c1}"/>
+    <rect x="12" y="12" width="36" height="56" rx="5" fill="url(#bsh)" opacity=".12"/>
+    <rect x="16" y="24" width="28" height="28" rx="3" fill="#fff" opacity=".9"/>
+    <rect x="20" y="29" width="20" height="2.5" rx="1" fill="${lc}" opacity=".7"/>
+    <rect x="20" y="34" width="16" height="2" rx="1" fill="${lc}" opacity=".4"/>
+    <rect x="20" y="39" width="20" height="2" rx="1" fill="${lc}" opacity=".4"/>
+    <rect x="20" y="44" width="12" height="2" rx="1" fill="${lc}" opacity=".3"/>
+    <defs><linearGradient id="bsh" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fff"/><stop offset="50%" stop-color="#fff" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".08"/></linearGradient></defs>
+  </svg>`;
+}
+
+// ── Card engine ──
+let CARDS = [], currentIdx = 0, revealed = 0;
+
+function buildCardsFromGoals() {
+  return activeGoals.slice(0, 3).map(goal => {
+    const t = THEMES[goal] || THEMES['Focus'];
+    const p = PRODUCT_CATALOG[goal] || PRODUCT_CATALOG['Focus'];
+    const elKey = t.el || 'focus';
+    const sceneEl = SCENE_ELEMENTS[elKey] || '';
+    const uid = elKey + Math.random().toString(36).slice(2,6);
+    return {
+      sceneFn: () => makeScene(uid, t.bg1, t.bg2, t.a1, t.a2, sceneEl),
+      heroFn: () => makeHero(uid, t.bg1, t.bg2, t.a1),
+      bottleColors: t.bc,
+      goalLabel: goal, goalBadge: `Matched to your ${goal} goal`,
+      title: p.title, desc: p.desc,
+      discount: p.discount, discountSub: p.discountSub,
+      brand: p.brand, name: p.name,
+      rating: p.rating, reviews: p.reviews,
+      priceWas: p.priceWas, priceNow: p.priceNow,
+      insight: p.insight, expires: '23:59:47'
+    };
+  });
+}
+
+function resetAndBuildCards() {
+  currentIdx = 0; revealed = 0;
+  CARDS = buildCardsFromGoals();
+  const stack = document.getElementById('cardStack');
+  stack.innerHTML = '';
+  document.getElementById('emptyState').classList.remove('visible');
+  stack.classList.remove('collapsed');
+  CARDS.forEach((d, i) => stack.appendChild(makeCard(d, i)));
+  updateRemaining();
+}
+
+function makeCard(d, i) {
+  const el = document.createElement('div');
+  el.className = 'scratch-card ' + (i===0?'active':i===1?'behind-1':'behind-2');
+  el.dataset.index = i;
+  el.innerHTML = `
+    <div class="card-front" onclick="revealCard(${i})">
+      ${d.sceneFn()}
+      <div class="card-front-overlay"></div>
+      <div class="card-front-content">
+        <div class="card-front-tag"><span class="tag-dot"></span> ${d.goalLabel} Goal</div>
+        <div class="card-front-title">${d.title}</div>
+        <div class="card-front-desc">${d.desc}</div>
+        <div class="card-front-cta">
+          Tap to reveal
+          <span class="cta-arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </div>
+    </div>
+    <div class="card-back">
+      <div class="reveal-hero">
+        ${d.heroFn()}
+        <div class="reveal-hero-overlay"></div>
+        <div class="reveal-hero-content">
+          <div class="reveal-goal-pill">${d.goalBadge}</div>
+          <div class="reveal-discount">${d.discount}</div>
+          <div class="reveal-discount-sub">${d.discountSub}</div>
+        </div>
+      </div>
+      <div class="reveal-body">
+        <div class="product-card">
+          <div class="product-thumb-wrap">${bottleSVG(...d.bottleColors)}</div>
+          <div class="product-details">
+            <div class="product-brand">${d.brand}</div>
+            <div class="product-name">${d.name}</div>
+            <div class="product-rating"><span class="stars">\u2605\u2605\u2605\u2605\u2605</span> ${d.rating} (${d.reviews})</div>
+            <div class="product-pricing">
+              <span class="price-was">${d.priceWas}</span>
+              <span class="price-now">${d.priceNow}</span>
+            </div>
+          </div>
+        </div>
+        <div class="ai-insight">
+          <div class="ai-label">
+            <span class="ai-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+            Personalized Insight
+          </div>
+          <div class="ai-text-wrap"><div class="ai-text"><span class="tw" data-full="${d.insight}"></span><span class="ai-cursor"></span></div></div>
+        </div>
+        <div class="cta-stack">
+          <button class="btn-add" onclick="addToCart(this,${i})">Add to Cart \u2014 ${d.priceNow}</button>
+          <button class="btn-save" onclick="saveForLater(${i})">Save for Later</button>
+        </div>
+      </div>
+      <div class="timer-strip">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Offer expires in <strong style="margin-left:4px">${d.expires}</strong>
+      </div>
+    </div>
+  `;
+  return el;
+}
+
+function revealCard(index) {
+  const card = document.querySelector(`.scratch-card[data-index="${index}"]`);
+  if (!card || card.dataset.revealed==='1') return;
+  card.dataset.revealed = '1';
+  card.querySelector('.card-front').style.display = 'none';
+  card.querySelector('.card-back').style.display = 'block';
+  doConfetti(); revealed++; updateRemaining();
+
+  const tw = card.querySelector('.tw'), cur = card.querySelector('.ai-cursor');
+  const wrap = card.querySelector('.ai-text-wrap');
+  const text = tw.dataset.full;
+  tw.textContent = text;
+  requestAnimationFrame(() => {
+    const fullH = wrap.scrollHeight;
+    wrap.style.minHeight = fullH + 'px';
+    tw.textContent = '';
+    let ci = 0;
+    const iv = setInterval(() => {
+      if (ci < text.length) { tw.textContent += text[ci]; ci++; }
+      else { clearInterval(iv); setTimeout(() => { if(cur) cur.style.display='none'; }, 1000); }
+    }, 12);
+  });
+}
+
+function addToCart(btn, index) {
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Added to Cart';
+  btn.style.background = '#2d5a06'; btn.style.pointerEvents = 'none';
+  toast('Added to cart with your personal discount');
+  setTimeout(() => advance(index), 1200);
+}
+
+function saveForLater(index) {
+  toast('Saved to your discoveries');
+  setTimeout(() => advance(index), 600);
+}
+
+function advance(index) {
+  const card = document.querySelector(`.scratch-card[data-index="${index}"]`);
+  card.classList.remove('active'); card.classList.add('dismissed'); currentIdx++;
+  document.querySelectorAll('.scratch-card').forEach(c => {
+    const idx = +c.dataset.index;
+    c.classList.remove('behind-1','behind-2','active');
+    if (idx===currentIdx) c.classList.add('active');
+    else if (idx===currentIdx+1) c.classList.add('behind-1');
+    else if (idx===currentIdx+2) c.classList.add('behind-2');
+  });
+  if (currentIdx >= CARDS.length) {
+    document.getElementById('emptyState').classList.add('visible');
+    document.getElementById('cardStack').classList.add('collapsed');
+  }
+  updateRemaining();
+}
+
+function updateRemaining() {
+  const r = CARDS.length - revealed;
+  document.getElementById('cardsRemaining').innerHTML = r>0 && currentIdx<CARDS.length
+    ? `<strong>${r}</strong> pick${r!==1?'s':''} remaining today` : '';
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 2400);
+}
+
+function doConfetti() {
+  const c = document.getElementById('confetti');
+  const colors = ['#46820b','#5a9e14','#d4a017','#f0d060','#ef4444','#3b82f6','#8b5cf6','#14b8a6','#f59e0b'];
+  for (let i=0;i<45;i++) {
+    const p = document.createElement('div'); p.className='confetti-piece';
+    const size = Math.random()*7+3;
+    p.style.cssText=`left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${Math.random()*.5}s;animation-duration:${Math.random()*1+2}s;`;
+    c.appendChild(p); setTimeout(()=>p.remove(),3200);
+  }
+}
+
+// ── Goals Editor ──
+const ALL_GOALS = [
+  'Sleep','Energy','Focus','Recovery','Immunity','Gut Health',
+  'Stress Relief','Joint Health','Heart Health','Skin & Beauty',
+  'Weight Management','Fitness','Mood','Bone Health','Hair & Nails','Healthy Aging'
+];
+
+let activeGoals = ['Sleep','Energy','Focus','Recovery'];
+let tempGoals = [];
+
+function renderGoalsDisplay() {
+  document.getElementById('goalsDisplay').innerHTML = activeGoals.map(g => `<div class="goal-tag">${g}</div>`).join('');
+}
+
+function openGoalsEditor() {
+  tempGoals = [...activeGoals];
+  renderGoalsGrid();
+  updateGoalsCount();
+  document.getElementById('goalsModal').classList.add('open');
+}
+
+function closeGoalsEditor() {
+  document.getElementById('goalsModal').classList.remove('open');
+}
+
+function renderGoalsGrid() {
+  const grid = document.getElementById('goalsGrid');
+  grid.innerHTML = ALL_GOALS.map(g => {
+    const sel = tempGoals.includes(g) ? 'selected' : '';
+    return `<button class="goal-option ${sel}" onclick="toggleGoal('${g}', this)">
+      <span class="goal-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${sel ? 'var(--green-600)' : '#fff'}" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+      ${g}
+    </button>`;
+  }).join('');
+}
+
+function toggleGoal(goal, btn) {
+  const idx = tempGoals.indexOf(goal);
+  if (idx > -1) {
+    tempGoals.splice(idx, 1);
+    btn.classList.remove('selected');
+    btn.querySelector('.goal-check svg').setAttribute('stroke', '#fff');
+  } else {
+    tempGoals.push(goal);
+    btn.classList.add('selected');
+    btn.querySelector('.goal-check svg').setAttribute('stroke', 'var(--green-600)');
+  }
+  updateGoalsCount();
+}
+
+function updateGoalsCount() {
+  const n = tempGoals.length;
+  document.getElementById('goalsCount').textContent = n === 0 ? 'Select at least one goal' : `${n} goal${n !== 1 ? 's' : ''} selected`;
+}
+
+function saveGoals() {
+  if (tempGoals.length === 0) { toast('Please select at least one goal'); return; }
+  activeGoals = [...tempGoals];
+  renderGoalsDisplay();
+  closeGoalsEditor();
+  resetAndBuildCards();
+  toast('Goals updated \u2014 here are your new reveals!');
+}
+
+renderGoalsDisplay();
+resetAndBuildCards();
+</script>
+</body>
+</html>
