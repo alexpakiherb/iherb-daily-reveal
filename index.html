@@ -204,6 +204,70 @@
   /* ── Haptic tap pulse ── */
   @keyframes tap-pulse{0%{box-shadow:0 0 0 0 rgba(90,158,20,.3)}100%{box-shadow:0 0 0 18px rgba(90,158,20,0)}}
 
+  /* ── View Toggle ── */
+  .view-toggle{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:var(--radius-full);padding:3px;margin-right:4px}
+  .view-toggle button{border:none;background:transparent;color:rgba(255,255,255,.55);cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--radius-full);transition:all .2s var(--ease-soft);display:flex;align-items:center;gap:5px;white-space:nowrap}
+  .view-toggle button.active{background:rgba(255,255,255,.22);color:#fff}
+  .view-toggle button:hover:not(.active){color:rgba(255,255,255,.8)}
+  .view-toggle button svg{width:13px;height:13px}
+
+  /* ── Desktop Layout ── */
+  body.desktop-mode .main{max-width:1120px;padding:40px 48px 100px}
+  body.desktop-mode .section-header{text-align:center;margin-bottom:36px}
+  body.desktop-mode .section-title{font-size:30px}
+  body.desktop-mode .section-subtitle{font-size:14.5px;max-width:460px;margin:8px auto 0}
+
+  /* Desktop grid */
+  .desktop-grid{display:none}
+  body.desktop-mode .desktop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:20px}
+
+  /* Desktop card overrides */
+  .dk-card{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-card);transition:all .35s var(--ease-soft);position:relative}
+  .dk-card:hover{box-shadow:var(--shadow-elevated);transform:translateY(-4px)}
+  .dk-card .card-scene{height:260px}
+  .dk-card .card-front{border-radius:0;box-shadow:none;cursor:pointer}
+  .dk-card .card-front-overlay{border-radius:0}
+  .dk-card .card-front-content{padding:24px 22px}
+  .dk-card .card-front-title{font-size:22px;margin-bottom:6px}
+  .dk-card .card-front-desc{font-size:12.5px;max-width:none}
+  .dk-card .card-front-cta{padding:10px 20px;font-size:12.5px;margin-top:16px}
+  .dk-card .card-front::after{display:none}
+  .dk-card.revealed .card-front{display:none}
+  .dk-card .card-back{display:none;animation:dk-reveal .5s var(--ease-spring) forwards}
+  .dk-card.revealed .card-back{display:block}
+  @keyframes dk-reveal{0%{opacity:0;transform:scale(.96)}100%{opacity:1;transform:scale(1)}}
+  .dk-card .reveal-hero{height:120px}
+  .dk-card .reveal-body{padding:18px 20px 18px}
+  .dk-card .product-card{padding:12px;gap:12px;margin-bottom:14px}
+  .dk-card .product-thumb-wrap{width:64px;height:64px}
+  .dk-card .product-name{font-size:12.5px}
+  .dk-card .ai-insight{padding:14px;margin-bottom:16px}
+  .dk-card .ai-text{font-size:12px;line-height:1.65}
+  .dk-card .btn-add{padding:13px 20px;font-size:14px}
+  .dk-card .btn-save{padding:11px 20px;font-size:12.5px}
+  .dk-card .timer-strip{font-size:11px;padding:10px 14px}
+  .dk-card.dismissed{pointer-events:none;transition:all .5s var(--ease-out-expo)}
+  .dk-card.dismissed .card-back{opacity:.4;filter:grayscale(.3);transform:scale(.98)}
+
+  /* Desktop progress */
+  .desktop-progress{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px}
+  .desktop-progress .progress-dot{width:9px;height:9px;border-radius:50%;background:var(--slate-200);transition:all .4s var(--ease-spring)}
+  .desktop-progress .progress-dot.active{background:var(--green-500);box-shadow:0 0 10px rgba(90,158,20,.3);transform:scale(1.2)}
+  .desktop-progress .progress-dot.done{background:var(--green-200)}
+  .desktop-picks{text-align:center;font-size:12.5px;color:var(--slate-400);margin-top:8px;font-weight:500}
+  .desktop-picks strong{color:var(--green-600)}
+
+  /* Desktop empty state */
+  body.desktop-mode .empty-state{padding:0}
+  body.desktop-mode .empty-state.visible{display:block}
+
+  /* Desktop goals modal centers instead of sheet */
+  body.desktop-mode .goals-modal-overlay{align-items:center}
+  body.desktop-mode .goals-modal{border-radius:24px;max-width:560px;max-height:75vh}
+
+  /* Hide mobile elements in desktop */
+  body.desktop-mode #mobileLayout{display:none!important}
+
   /* ── Reduced motion ── */
   @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -213,6 +277,10 @@
 <div class="header">
   <div class="header-logo">iHerb<span>●</span></div>
   <div class="header-icons">
+    <div class="view-toggle" id="viewToggle">
+      <button class="active" id="btnMobile" onclick="setView('mobile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>Mobile</button>
+      <button id="btnDesktop" onclick="setView('desktop')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Desktop</button>
+    </div>
     <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <div style="position:relative">
       <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -256,9 +324,16 @@
     <div class="section-title">Your Daily Reveal</div>
     <div class="section-subtitle">Tap to unwrap personalized wellness surprises matched to your goals.</div>
   </div>
-  <div class="card-stack" id="cardStack"></div>
-  <div class="progress-dots" id="progressDots"></div>
-  <div class="cards-remaining" id="cardsRemaining"></div>
+  <!-- Mobile layout (default) -->
+  <div id="mobileLayout">
+    <div class="card-stack" id="cardStack"></div>
+    <div class="progress-dots" id="progressDots"></div>
+    <div class="cards-remaining" id="cardsRemaining"></div>
+  </div>
+  <!-- Desktop layout -->
+  <div class="desktop-grid" id="desktopGrid"></div>
+  <div class="desktop-progress" id="desktopDots" style="display:none"></div>
+  <div class="desktop-picks" id="desktopPicks" style="display:none"></div>
   <div class="empty-state" id="emptyState">
     <div class="empty-wrap">
       <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -700,9 +775,182 @@ function saveGoals() {
   renderGoalsDisplay();
   closeGoalsEditor();
   setTimeout(() => {
-    resetAndBuildCards();
+    if (currentView === 'desktop') {
+      rebuildDesktop();
+    } else {
+      resetAndBuildCards();
+    }
     toast('Goals updated \u2014 here are your new reveals!');
   }, 300);
+}
+
+// ── View Toggle ──
+let currentView = 'mobile';
+let dkRevealed = 0;
+
+function setView(mode) {
+  currentView = mode;
+  document.body.classList.toggle('desktop-mode', mode === 'desktop');
+  document.getElementById('btnMobile').classList.toggle('active', mode === 'mobile');
+  document.getElementById('btnDesktop').classList.toggle('active', mode === 'desktop');
+
+  if (mode === 'desktop') {
+    document.getElementById('desktopDots').style.display = '';
+    document.getElementById('desktopPicks').style.display = '';
+    rebuildDesktop();
+  } else {
+    document.getElementById('desktopGrid').innerHTML = '';
+    document.getElementById('desktopDots').style.display = 'none';
+    document.getElementById('desktopPicks').style.display = 'none';
+    document.getElementById('mobileLayout').style.display = '';
+    resetAndBuildCards();
+  }
+}
+
+function rebuildDesktop() {
+  currentIdx = 0; revealed = 0; dkRevealed = 0;
+  CARDS = buildCardsFromGoals();
+  const grid = document.getElementById('desktopGrid');
+  grid.innerHTML = '';
+  document.getElementById('emptyState').classList.remove('visible');
+
+  CARDS.forEach((d, i) => grid.appendChild(makeDesktopCard(d, i)));
+  updateDesktopDots();
+  updateDesktopPicks();
+}
+
+function makeDesktopCard(d, i) {
+  const el = document.createElement('div');
+  el.className = 'dk-card';
+  el.dataset.index = i;
+  el.innerHTML = `
+    <div class="card-front" onclick="revealDesktop(${i})">
+      ${d.sceneFn()}
+      <div class="card-front-overlay"></div>
+      <div class="card-front-content">
+        <div class="card-front-tag"><span class="tag-dot"></span> ${d.goalLabel} Goal</div>
+        <div class="card-front-title">${d.title}</div>
+        <div class="card-front-desc">${d.desc}</div>
+        <div class="card-front-cta">
+          Click to reveal
+          <span class="cta-arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </div>
+    </div>
+    <div class="card-back">
+      <div class="reveal-hero">
+        ${d.heroFn()}
+        <div class="reveal-hero-overlay"></div>
+        <div class="reveal-hero-content">
+          <div class="reveal-goal-pill">${d.goalBadge}</div>
+          <div class="reveal-discount">${d.discount}</div>
+          <div class="reveal-discount-sub">${d.discountSub}</div>
+        </div>
+      </div>
+      <div class="reveal-body">
+        <div class="product-card">
+          <div class="product-thumb-wrap"><img src="${d.img}" alt="${d.name}" style="width:100%;height:100%;object-fit:contain"></div>
+          <div class="product-details">
+            <div class="product-brand">${d.brand}</div>
+            <div class="product-name">${d.name}</div>
+            <div class="product-rating"><span class="stars">\u2605\u2605\u2605\u2605\u2605</span> ${d.rating} (${d.reviews})</div>
+            <div class="product-pricing">
+              <span class="price-was">${d.priceWas}</span>
+              <span class="price-now">${d.priceNow}</span>
+            </div>
+          </div>
+        </div>
+        <div class="ai-insight">
+          <div class="ai-label">
+            <span class="ai-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+            Personalized Insight
+          </div>
+          <div class="ai-text-wrap"><div class="ai-text"><span class="tw" data-full="${d.insight}"></span><span class="ai-cursor"></span></div></div>
+        </div>
+        <div class="cta-stack">
+          <button class="btn-add" onclick="addToCartDesktop(this,${i})">Add to Cart \u2014 ${d.priceNow}</button>
+          <button class="btn-save" onclick="saveForLaterDesktop(${i})">Save for Later</button>
+        </div>
+      </div>
+      <div class="timer-strip">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Offer expires in <strong style="margin-left:4px" class="timer-value">${d.expires}</strong>
+      </div>
+    </div>
+  `;
+  return el;
+}
+
+function revealDesktop(index) {
+  const card = document.querySelector('#desktopGrid .dk-card[data-index="'+index+'"]');
+  if (!card || card.classList.contains('revealed')) return;
+  card.classList.add('revealed');
+  dkRevealed++;
+  doConfetti();
+  if (navigator.vibrate) navigator.vibrate(15);
+
+  // Typewriter effect
+  const tw = card.querySelector('.tw'), cur = card.querySelector('.ai-cursor');
+  const wrap = card.querySelector('.ai-text-wrap');
+  const text = tw.dataset.full;
+  tw.textContent = text;
+  requestAnimationFrame(() => {
+    const fullH = wrap.scrollHeight;
+    wrap.style.minHeight = fullH + 'px';
+    tw.textContent = '';
+    let ci = 0;
+    const iv = setInterval(() => {
+      if (ci < text.length) { tw.textContent += text[ci]; ci++; }
+      else { clearInterval(iv); setTimeout(() => { if(cur) cur.style.display='none'; }, 1000); }
+    }, 10);
+  });
+
+  startTimer(card.querySelector('.timer-value'));
+  updateDesktopDots();
+  updateDesktopPicks();
+
+  // Check if all revealed
+  if (dkRevealed >= CARDS.length) {
+    setTimeout(() => {
+      document.getElementById('emptyState').classList.add('visible');
+    }, 1500);
+  }
+}
+
+function addToCartDesktop(btn, index) {
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg> Added to Cart';
+  btn.classList.add('added');
+  btn.style.pointerEvents = 'none';
+  if (navigator.vibrate) navigator.vibrate([10,50,10]);
+  toast('Added to cart with your personal discount');
+  const card = document.querySelector('#desktopGrid .dk-card[data-index="'+index+'"]');
+  setTimeout(() => { card.classList.add('dismissed'); }, 1400);
+}
+
+function saveForLaterDesktop(index) {
+  toast('Item added to "My List"');
+  const card = document.querySelector('#desktopGrid .dk-card[data-index="'+index+'"]');
+  setTimeout(() => { card.classList.add('dismissed'); }, 700);
+}
+
+function updateDesktopDots() {
+  const container = document.getElementById('desktopDots');
+  if (!container) return;
+  container.innerHTML = CARDS.map((_, i) => {
+    const card = document.querySelector('#desktopGrid .dk-card[data-index="'+i+'"]');
+    let cls = 'progress-dot';
+    if (card && card.classList.contains('revealed')) cls += ' done';
+    else if (i === [...document.querySelectorAll('#desktopGrid .dk-card')].findIndex(c => !c.classList.contains('revealed'))) cls += ' active';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function updateDesktopPicks() {
+  const el = document.getElementById('desktopPicks');
+  if (!el) return;
+  const r = CARDS.length - dkRevealed;
+  el.innerHTML = r > 0
+    ? `<strong>${r}</strong> pick${r!==1?'s':''} remaining today` : '';
 }
 
 renderGoalsDisplay();
